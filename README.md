@@ -2,7 +2,7 @@
 
 📡 Implementation of Go-Back-N Protocol – Selective Repeat
 
-🎯 Aim
+## 🎯 Aim
 
 To write and execute a program for the Go-Back-N protocol using the Selective Repeat technique.
 
@@ -12,7 +12,7 @@ To write and execute a program for the Go-Back-N protocol using the Selective Re
 
 • 	Turbo C Compiler
 
-📋 Procedure
+## 📋 Procedure
 1. 	Connect two computers in a Wired/Wireless LAN.
 2. 	Ensure both computers are on the same network and can ping each other.
 3. 	Open a new C file in Code::Blocks or any C IDE and type the program.
@@ -26,44 +26,71 @@ Add: netproto and pthread
 • 	Error rate
 7. 	Choose the file and verify the Go-Back-N protocol operation.
 
-💻 Program
+## 💻 Program
+```txt
 
 #include <stdio.h>
+#define MAX_FRAMES 100
 
-void main() {
-    
+int main() {
     int i, j, n;
+    char frame[MAX_FRAMES + 1][10]; // Fixed size array
+
     printf("GO BACK N ARQ\n");
-    printf("Enter number of frames: ");
+    printf("Enter number of frames (max %d): ", MAX_FRAMES);
     scanf("%d", &n);
 
-    char frame[n][10];
+    if (n > MAX_FRAMES || n < 1) {
+        printf("Invalid number of frames! Please enter between 1 and %d\n", MAX_FRAMES);
+        return 1;
+    }
 
     for (i = 1; i <= n; i++) {
         printf("Content for frame %d: ", i);
-        scanf("%s", frame[i]);
+        scanf("%9s", frame[i]); // Limit input to prevent buffer overflow
     }
 
     printf("Enter frame number with no ACK: ");
     scanf("%d", &j);
 
+    // First transmission attempt - send all frames
+    printf("\n--- Initial Transmission ---\n");
     for (i = 1; i <= n; i++) {
-        if (i != j)
-            printf("\nSending frame %d\nFRAME ACKNOWLEDGED...\n", i);
+        printf("Sending frame %d: %s\n", i, frame[i]);
+        if (i != j) {
+            printf("FRAME %d ACKNOWLEDGED...\n", i);
+        } else {
+            printf("Frame %d - NO ACKNOWLEDGMENT RECEIVED\n", i);
+        }
+        printf("\n");
     }
 
-    if (j <= n) {
-        printf("No Acknowledgement for frame %d...\n", j);
-        printf("Resending... Content from frame %d: %s\n\n", j, frame[j]);
+    // Go-Back-N: Retransmit from error frame onwards
+    if (j >= 1 && j <= n) {
+        printf("--- Go-Back-N Retransmission ---\n");
+        printf("No Acknowledgment for frame %d...\n", j);
+        printf("Retransmitting all frames from frame %d onwards:\n\n", j);
+
+        for (i = j; i <= n; i++) {
+            printf("Resending frame %d: %s\n", i, frame[i]);
+            printf("FRAME %d ACKNOWLEDGED...\n", i);
+            printf("\n");
+        }
+    } else {
+        printf("Invalid frame number entered.\n");
     }
 
-    printf("\nSending frame %d\nFRAME ACKNOWLEDGED...\n", j);
-    printf("\n\nALL FRAMES RECEIVED SUCCESSFULLY\n\n");
+    printf("ALL FRAMES RECEIVED SUCCESSFULLY\n\n");
+
+    return 0;
 }
+```
 
-🖥️ Sample Output
-<img width="1236" height="1108" alt="code block 2" src="https://github.com/user-attachments/assets/49621d52-6eda-4d7e-85e0-49a6ad75a1d6" />
 
-✅ Result
+## 🖥️ Sample Output
+<img width="1920" height="1080" alt="Screenshot (255)" src="https://github.com/user-attachments/assets/a35a58b0-1f12-48fc-ac84-2a181400b4ae" />
+
+
+## ✅ Result
 
 Thus, the Go-Back-N protocol using Selective Repeat was successfully implemented and verified.
